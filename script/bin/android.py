@@ -4,6 +4,7 @@ from time import mktime, strptime
 from os import makedirs, path, stat, utime
 from urllib import urlretrieve, urlopen
 from xml.etree import ElementTree
+import os
 
 base_url = 'https://dl.google.com/android/repository/'
 out_dir = '/data/mirrors/android/repository'
@@ -11,7 +12,8 @@ out_dir = '/data/mirrors/android/repository'
 def download(filename, last_modified):
    file = out_dir + filename
    print 'Downloading ' + filename
-   urlretrieve(base_url + filename, file)
+   #urlretrieve(base_url + filename, file)
+   os.system('wget -c -t 0 -O '+file+' '+base_url+filename)
    utime(file, (last_modified, last_modified))
 
    process(filename)
