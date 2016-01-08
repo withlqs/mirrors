@@ -53,6 +53,8 @@ def process(filename, size=-1):
 
 def fetch(file):
    global download_url
+   print 'file: '+file
+
    if base_url in file:
       dir = file[len(base_url) - 1:rfind(file, '/') + 1]
       file = file[rfind(file, '/') + 1:]
@@ -64,6 +66,11 @@ def fetch(file):
    else:
       dir = '/'
       download_url = base_url
+
+   print 'dir: '+dir
+   print 'file: '+file
+   print 'download_url: '+download_url
+
    process(dir + file)
    base_dir = path.dirname(dir + file)
    if base_dir != '/':
