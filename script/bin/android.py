@@ -7,13 +7,16 @@ from xml.etree import ElementTree
 import os
 
 base_url = 'https://dl.google.com/android/repository/'
+base_url2 = 'https://dl-ssl.google.com/android/repository/'
 out_dir = '/data/mirrors/android/repository'
+
+download_url = ''
 
 def download(filename, last_modified):
    file = out_dir + filename
    print 'Downloading ' + filename
    #urlretrieve(base_url + filename, file)
-   os.system('wget -c -t 0 -O '+file+' '+base_url+filename)
+   os.system('wget -c -t 0 -O '+file+' '+download_url+filename)
    utime(file, (last_modified, last_modified))
 
    process(filename)
@@ -25,7 +28,7 @@ def process(filename, size=-1):
       return
 
    print 'Processing: ' + filename
-   handle = urlopen(base_url + filename)
+   handle = urlopen(download_url + filename)
    headers = handle.info()
    content_length = int(headers.getheader('Content-Length'))
    last_modified = mktime(strptime(headers.getheader('Last-Modified'), '%a, %d %b %Y %H:%M:%S %Z'))
@@ -49,13 +52,18 @@ def process(filename, size=-1):
          print 'Skipping: ' + filename
 
 def fetch(file):
+   global download_url
    if base_url in file:
       dir = file[len(base_url) - 1:rfind(file, '/') + 1]
       file = file[rfind(file, '/') + 1:]
+      download_url = base_url
    elif 'http' in file:
-      return
+      dir = file[len(base_url2) - 1:rfind(file, '/') + 1]
+      file = file[rfind(file, '/') + 1:]
+      download_url = base_url2
    else:
       dir = '/'
+      download_url = base_url
    process(dir + file)
    base_dir = path.dirname(dir + file)
    if base_dir != '/':
